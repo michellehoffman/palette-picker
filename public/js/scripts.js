@@ -58,6 +58,10 @@ async function submitProject(e) {
   });
   const results = await response.json();
 
+  if (results.message) {
+    return $('.project-display').prepend(`<p>${results.message}</p>`)
+  }
+
   $('.project-display').append(
     `
       <div id="${ results.id }">
@@ -65,13 +69,5 @@ async function submitProject(e) {
       </div>
     `
   )
+
 }
-
-// async function showProjects(id) {
-//   const url = `http://localhost:3000/api/v1/projects/${ id }`;
-//   const response = await fetch(url);
-//   const results = await response.json();
-//   debugger;
-
-//   $('.project-display').
-// }

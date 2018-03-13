@@ -51,6 +51,14 @@ app.get('/api/v1/palettes/:id', (request, response) => {
 app.post('/api/v1/projects', (request, response) => {
   const id = Date.now();
   const { name } = request.body;
+  const match = app.locals.projects.find(project => project.name === name);
+  
+  if(match) {
+    return response.status(400).json({ 
+      message: `Project ${ name } already exists` 
+    });
+  }
+
   const newProject = { 
     id,
     name,
