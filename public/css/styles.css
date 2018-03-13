@@ -1,0 +1,86 @@
+* {
+  margin: 0px;
+}
+
+body {
+  text-align: center;
+}
+
+h1 {
+  margin: 20px 0;
+  text-align: center;
+}
+
+img {
+  height: 30px;
+  width: 30px;
+}
+
+input {
+  margin-left: -4.1px;
+  margin-right: -5px;
+  padding: 10px;
+  width: 300px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+select {
+  background-color: #FFFFFF;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAh0lEQVQ4T93TMQrCUAzG8V9x8QziiYSuXdzFC7h4AcELOPQAdXYovZCHEATlgQV5GFTe1ozJlz/kS1IpjKqw3wQBVyy++JI0y1GTe7DCBbMAckeNIQKk/BanALBB+16LtnDELoMcsM/BESDlz2heDR3WePwKSLo5eoxz3z6NNcFD+vu3ij14Aqz/DxGbKB7CAAAAAElFTkSuQmCC');
+  background-position: 75px center;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  padding: 10px;
+  width: 100px;
+  -webkit-appearance: none;
+}
+
+.palette-display {
+  display: flex;
+  justify-content: center;
+}
+
+.palette {
+  height: 200px;
+  text-align: center;
+  width: 200px;
+  background-color: grey;
+}
+
+.palette-details {
+  position: relative;
+  top: 120px;
+}
+
+.generate-button {
+  border: none;
+  background-color: grey;
+  margin: 40px 0;
+  padding: 10px 30px;
+}
+
+.save-palette {
+  border-bottom: 1px solid grey;
+  margin: auto;
+  padding-bottom: 30px;
+  width: 1000px;
+}
+
+.save-project {
+  margin-top: 30px;
+}
+
+.save-palette-button,
+.save-project-button {
+  padding: 10px;
+  border: 1.5px solid grey;
+  background: grey;
+}
+
+#project-name {
+  width: 400px;
+}
