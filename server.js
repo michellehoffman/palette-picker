@@ -34,6 +34,13 @@ app.get('/api/v1/projects', (request, response) => {
   response.status(200).json(projects);
 })
 
+app.get('/api/v1/projects/:id', (request, response) => {
+  const { id } = request.params;
+  const project = app.locals.projects.find(project => project.id === parseInt(id));
+
+  response.status(200).json(project);
+})
+
 app.get('/api/v1/palettes/:id', (request, response) => {
   const { id } = request.params;
   const palette = app.locals.palettes.find(palette => palette.id === parseInt(id));
@@ -44,6 +51,19 @@ app.get('/api/v1/palettes/:id', (request, response) => {
 app.post('/api/v1/projects', (request, response) => {
   const id = Date.now();
   const { name } = request.body;
+
+  if(!name) {
+    return response.status(422).json({ message: 'Please enter a project name' });
+  }
+  
+  const match = app.locals.projects.find(project => project.name === name);
+  
+  if(match) {
+    return response.status(400).json({ 
+      message: `Project ${ name } already exists` 
+    });
+  }
+
   const newProject = { 
     id,
     name,
