@@ -34,6 +34,13 @@ app.get('/api/v1/projects', (request, response) => {
   response.status(200).json(projects);
 })
 
+app.get('/api/v1/projects/:id', (request, response) => {
+  const { id } = request.params;
+  const project = app.locals.projects.find(project => project.id === parseInt(id));
+
+  response.status(200).json(project);
+})
+
 app.get('/api/v1/palettes/:id', (request, response) => {
   const { id } = request.params;
   const palette = app.locals.palettes.find(palette => palette.id === parseInt(id));

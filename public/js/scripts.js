@@ -1,6 +1,7 @@
 window.onload = displayColors;
 $('.generate-button').on('click', displayColors)
 $('.lock-button').on('click', lockColor);
+$('.save-project').on('submit', submitProject);
 
 const palette = [
   { div: '.color-1', color: null, locked: false },
@@ -44,3 +45,33 @@ function lockColor() {
   color.locked = !color.locked;
   $(this).attr('src', lockImage[color.locked]);
 }
+
+async function submitProject(e) {
+  e.preventDefault();
+  
+  const name = e.target.elements[0].value;
+  const url = 'http://localhost:3000/api/v1/projects';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name })
+  });
+  const results = await response.json();
+
+  $('.project-display').append(
+    `
+      <div id="${ results.id }">
+        <h3>${ results.name }</h3>
+      </div>
+    `
+  )
+}
+
+// async function showProjects(id) {
+//   const url = `http://localhost:3000/api/v1/projects/${ id }`;
+//   const response = await fetch(url);
+//   const results = await response.json();
+//   debugger;
+
+//   $('.project-display').
+// }
