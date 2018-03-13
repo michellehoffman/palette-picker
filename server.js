@@ -51,6 +51,11 @@ app.get('/api/v1/palettes/:id', (request, response) => {
 app.post('/api/v1/projects', (request, response) => {
   const id = Date.now();
   const { name } = request.body;
+
+  if(!name) {
+    return response.status(422).json({ message: 'Please enter a project name' });
+  }
+  
   const match = app.locals.projects.find(project => project.name === name);
   
   if(match) {

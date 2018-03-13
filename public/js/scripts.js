@@ -59,7 +59,7 @@ async function submitProject(e) {
   const results = await response.json();
 
   if (results.message) {
-    return $('.project-display').prepend(`<p>${results.message}</p>`)
+    return $('.project-form-validation').prepend(`<p>${results.message}</p>`)
   }
 
   $('.project-display').append(
@@ -68,6 +68,6 @@ async function submitProject(e) {
         <h3>${ results.name }</h3>
       </div>
     `
-  )
-
+  );
+  $('.project-form-validation').empty();
 }
