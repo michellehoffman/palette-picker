@@ -20,5 +20,6 @@ function displayColors() {
     const color = generateColor();
 
     $(div).css('background-color', color)
+    $(div).find('h2').text(color);
   })
 }
