@@ -29,10 +29,11 @@ const displayColors = () => {
 
       $(section.div).css('background-color', section.color)
     }
-    $(section.div).find('h2').text(section.color);
+    $(section.div).find('.hexCode').text(section.color);
   })
 }
 
+// API CALL
 const getProjects = async() => {
   try {
     const url = `${ root }/api/v1/projects`;
@@ -49,7 +50,7 @@ const displayProjectOptions = async() => {
   const projects = await getProjects();
   
   projects.map(project => {
-    return $(`<option value=${ project.name }>${ project.name }</option>`).appendTo('#select-project');
+    return $(`<option id=${ project.id } value=${ project.name }>${ project.name }</option>`).appendTo('#select-project');
   });
 }
 
@@ -64,6 +65,23 @@ const lockColor = () => {
 
   color.locked = !color.locked;
   $(this).attr('src', lockImage[color.locked]);
+}
+
+// API CALL
+const createPalette = async(info) => {
+  try {
+    const url = `${ root }/api/v1/palettes`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(info)
+    })
+    const results = await response.json();
+
+    return results;
+  } catch (error) {
+    return error;
+  }
 }
 
 // API CALL
@@ -98,13 +116,17 @@ const validation = (message) => {
   $('.project-form-validation').prepend(message)
 }
 
-// const submitPalette = async(event) => {
-//   event.preventDefault();
+const submitPalette = async(event) => {
+  event.preventDefault();
 
-//   console.log(event.target.elements);
-//   const projectName = event.target.elements[0].value;
-
-// }
+  const options = event.target.elements[0].options;
+  const projectID = options[options.selectedIndex].id;
+  const name = event.target.elements[1].value || 'My Project';
+  const colors = palette.map(div => div.color);
+  const info = { name, colors, projectID };
+  
+  const results = await createPalette(info);
+}
 
 const submitProject = async(event) => {
   event.preventDefault();
