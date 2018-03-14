@@ -84,3 +84,8 @@ select {
 #project-name {
   width: 400px;
 }
+
+.color {
+  width: 20px;
+  height: 20px;
+}

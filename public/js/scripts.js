@@ -105,6 +105,23 @@ const createProject = async(name) => {
   }
 }
 
+const showPalette = ({ name, colors, projectID }, id) => {
+  const paletteDisplay = `
+    <div class="${ id }">
+      <h4>${ name }</h4>
+      <div class="saved-palette">
+        <div class="color" style="background-color: ${ colors[0] }"></div>
+        <div class="color" style="background-color: ${ colors[1] }"></div>
+        <div class="color" style="background-color: ${ colors[2] }"></div>
+        <div class="color" style="background-color: ${ colors[3] }"></div>
+        <div class="color" style="background-color: ${ colors[4] }"></div>
+      </div>
+    </div>
+  `
+  
+  $(paletteDisplay).appendTo(`.${ projectID }`);
+}
+
 const showProject = ({ id, name }) => {
   $('.project-form-validation').empty();
   $('.project-display').append(
@@ -131,7 +148,7 @@ const submitPalette = async(event) => {
   const info = { name, colors, projectID };
   const results = await createPalette(info);
 
-  // showPalette(info, results);
+  showPalette(info, results.id);
 }
 
 const submitProject = async(event) => {
