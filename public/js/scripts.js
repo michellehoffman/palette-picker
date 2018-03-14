@@ -46,21 +46,23 @@ const getProjects = async() => {
   }
 }
 
-const displayProjectOptions = async() => {
+const displayProjects = async() => {
   const projects = await getProjects();
   
-  projects.map(project => {
-    return $(`<option id=${ project.id } value=${ project.name }>${ project.name }</option>`).appendTo('#select-project');
-  });
+  projects.forEach(project => {
+    showProject(project);
+    showPalette()
+    displayProjectOption(project.id, project.name);
+  })
 }
 
-const displayNewProjectOption = (id, name) => {
+const displayProjectOption = (id, name) => {
   $(`<option id=${ id } value=${ name }>${ name }</option>`).appendTo('#select-project');
 }
 
 const setup = () => {
   displayColors();
-  displayProjectOptions();
+  displayProjects();
 }
 
 const lockColor = () => {
@@ -118,7 +120,7 @@ const showPalette = ({ name, colors, projectID }, id) => {
       </div>
     </div>
   `
-  
+
   $(paletteDisplay).appendTo(`.${ projectID }`);
 }
 
@@ -131,7 +133,7 @@ const showProject = ({ id, name }) => {
       </div>
     `
   );
-  displayNewProjectOption(id, name);
+  displayProjectOption(id, name);
 }
 
 const validation = (message) => {
@@ -149,6 +151,7 @@ const submitPalette = async(event) => {
   const results = await createPalette(info);
 
   showPalette(info, results.id);
+  event.target.reset();
 }
 
 const submitProject = async(event) => {
