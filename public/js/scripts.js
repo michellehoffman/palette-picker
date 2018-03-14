@@ -54,6 +54,10 @@ const displayProjectOptions = async() => {
   });
 }
 
+const displayNewProjectOption = (id, name) => {
+  $(`<option id=${ id } value=${ name }>${ name }</option>`).appendTo('#select-project');
+}
+
 const setup = () => {
   displayColors();
   displayProjectOptions();
@@ -105,11 +109,12 @@ const showProject = ({ id, name }) => {
   $('.project-form-validation').empty();
   $('.project-display').append(
     `
-      <div id="${ id }">
+      <div class="${ id }">
         <h3>${ name }</h3>
       </div>
     `
   );
+  displayNewProjectOption(id, name);
 }
 
 const validation = (message) => {
@@ -124,8 +129,9 @@ const submitPalette = async(event) => {
   const name = event.target.elements[1].value || 'My Project';
   const colors = palette.map(div => div.color);
   const info = { name, colors, projectID };
-  
   const results = await createPalette(info);
+
+  // showPalette(info, results);
 }
 
 const submitProject = async(event) => {
