@@ -59,10 +59,10 @@ const getPalettes = async(id) => {
 }
 
 const getProjectInfo = async(project) => {
+  displayProjectOption(project.id, project.name);
   showProject(project);
   const palettes = await getPalettes(project.id);
-  palettes.map(palette => showPalette(palette, palette.id))
-  displayProjectOption(project.id, project.name);
+  palettes.map(palette => showPalette(palette))
 } 
 
 const displayProjects = async() => {
@@ -122,7 +122,7 @@ const createProject = async(name) => {
   }
 }
 
-const showPalette = ({ name, colors, projectID }, id) => {
+const showPalette = ({ name, colors, projectID, id }) => {
   const paletteDisplay = `
     <div class="${ id }">
       <h4>${ name }</h4>
@@ -135,7 +135,6 @@ const showPalette = ({ name, colors, projectID }, id) => {
       </div>
     </div>
   `
-
   $(paletteDisplay).appendTo(`.${ projectID }`);
 }
 
@@ -152,7 +151,7 @@ const showProject = ({ id, name }) => {
 }
 
 const validation = (message) => {
-  $('.project-form-validation').prepend(message)
+  $('.project-form-validation').prepend(message);
 }
 
 const getPaletteFormDetails = (elements) => {
@@ -168,10 +167,9 @@ const submitPalette = async(event) => {
 
   const { projectID, name } = getPaletteFormDetails();
   const colors = palette.map(div => div.color);
-  const info = { name, colors, projectID };
-  const results = await createPalette(info);
-
-  showPalette(info, results.id);
+  const results = await createPalette({ name, colors, projectID });
+  
+  showPalette(results);
   event.target.reset();
 }
 
