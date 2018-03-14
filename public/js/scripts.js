@@ -46,14 +46,29 @@ const getProjects = async() => {
   }
 }
 
+const getPalettes = async(id) => {
+  try {
+    const url = `${ root }/api/v1/projects/${ id }/palettes`;
+    const response = await fetch(url);
+    const results = await response.json();
+
+    return results;
+  } catch(error) {
+    return error;
+  }
+}
+
+const getProjectInfo = async(project) => {
+  showProject(project);
+  const palettes = await getPalettes(project.id);
+  palettes.map(palette => showPalette(palette, palette.id))
+  displayProjectOption(project.id, project.name);
+} 
+
 const displayProjects = async() => {
   const projects = await getProjects();
   
-  projects.forEach(project => {
-    showProject(project);
-    showPalette()
-    displayProjectOption(project.id, project.name);
-  })
+  projects.forEach(project => getProjectInfo(project));
 }
 
 const displayProjectOption = (id, name) => {

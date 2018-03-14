@@ -46,7 +46,7 @@ app.get('/api/v1/projects/:id/palettes', (request, response) => {
   const { id } = request.params;
   const palettes = app.locals.palettes.filter(palette => palette.projectID === parseInt(id));
 
-  response.status(200).json(palette);
+  response.status(200).json(palettes);
 })
 
 app.post('/api/v1/projects', (request, response) => {
