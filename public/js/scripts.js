@@ -1,8 +1,4 @@
-window.onload = displayColors;
-$('.generate-button').on('click', displayColors)
-$('.lock-button').on('click', lockColor);
-$('.save-project').on('submit', submitProject);
-
+const root = 'http://localhost:3000';
 const palette = [
   { div: '.color-1', color: null, locked: false },
   { div: '.color-2', color: null, locked: false },
@@ -10,13 +6,12 @@ const palette = [
   { div: '.color-4', color: null, locked: false },
   { div: '.color-5', color: null, locked: false }
 ]
-
 const lockImage = {
   true: './assets/002-lock-1.svg',
   false: './assets/003-lock.svg'
 }
 
-function generateColor() {
+const generateColor = () => {
   const letters = '0123456789ABCDEF';
   let color = '#';
 
@@ -27,7 +22,7 @@ function generateColor() {
   return color;
 }
 
-function displayColors() {
+const displayColors = () => {
   palette.forEach( section => {
     if(!section.locked) {
       section.color = generateColor();
@@ -38,7 +33,7 @@ function displayColors() {
   })
 }
 
-function lockColor() {
+const lockColor = () => {
   const hexCode = $(this).next().text();
   const color = palette.find(section => section.color === hexCode);
 
@@ -46,28 +41,51 @@ function lockColor() {
   $(this).attr('src', lockImage[color.locked]);
 }
 
-async function submitProject(e) {
-  e.preventDefault();
-  
-  const name = e.target.elements[0].value;
-  const url = 'http://localhost:3000/api/v1/projects';
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name })
-  });
-  const results = await response.json();
-
-  if (results.message) {
-    return $('.project-form-validation').prepend(`<p>${results.message}</p>`)
+// API CALL
+const createProject = async(name) => {
+  try {
+    const url = `${ root }/api/v1/projects`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+    const results = await response.json();
+    
+    return results;
+  } catch(error) {
+    return error;
   }
+}
 
+const showProject = ({ id, name }) => {
+  $('.project-form-validation').empty();
   $('.project-display').append(
     `
-      <div id="${ results.id }">
-        <h3>${ results.name }</h3>
+      <div id="${ id }">
+        <h3>${ name }</h3>
       </div>
     `
   );
-  $('.project-form-validation').empty();
 }
+
+const validation = (message) => {
+  $('.project-form-validation').prepend(message)
+}
+
+const submitProject = async(event) => {
+  event.preventDefault();
+
+  const name = event.target.elements[0].value;
+  const results = await createProject(name);
+  const { message } = results;
+
+  message ? validation(message) : showProject(results)
+  event.target.reset();
+}
+
+window.onload = displayColors;
+$('.generate-button').on('click', displayColors);
+$('.lock-button').on('click', lockColor);
+$('.save-palette').on('submit', submitPalette);
+$('.save-project').on('submit', submitProject);
