@@ -29,8 +29,40 @@ const displayColors = () => {
 
       $(section.div).css('background-color', section.color)
     }
-    $(section.div).find('h2').text(section.color);
+    $(section.div).find('.hexCode').text(section.color);
   })
+}
+
+// API CALL
+const getProjects = async() => {
+  try {
+    const url = `${ root }/api/v1/projects`;
+    const response = await fetch(url);
+    const results = await response.json();
+    
+    return results;
+  } catch(error) {
+    return error;
+  }
+}
+
+const displayProjects = async() => {
+  const projects = await getProjects();
+  
+  projects.forEach(project => {
+    showProject(project);
+    showPalette()
+    displayProjectOption(project.id, project.name);
+  })
+}
+
+const displayProjectOption = (id, name) => {
+  $(`<option id=${ id } value=${ name }>${ name }</option>`).appendTo('#select-project');
+}
+
+const setup = () => {
+  displayColors();
+  displayProjects();
 }
 
 const lockColor = () => {
@@ -39,6 +71,23 @@ const lockColor = () => {
 
   color.locked = !color.locked;
   $(this).attr('src', lockImage[color.locked]);
+}
+
+// API CALL
+const createPalette = async(info) => {
+  try {
+    const url = `${ root }/api/v1/palettes`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(info)
+    })
+    const results = await response.json();
+
+    return results;
+  } catch (error) {
+    return error;
+  }
 }
 
 // API CALL
@@ -58,19 +107,51 @@ const createProject = async(name) => {
   }
 }
 
+const showPalette = ({ name, colors, projectID }, id) => {
+  const paletteDisplay = `
+    <div class="${ id }">
+      <h4>${ name }</h4>
+      <div class="saved-palette">
+        <div class="color" style="background-color: ${ colors[0] }"></div>
+        <div class="color" style="background-color: ${ colors[1] }"></div>
+        <div class="color" style="background-color: ${ colors[2] }"></div>
+        <div class="color" style="background-color: ${ colors[3] }"></div>
+        <div class="color" style="background-color: ${ colors[4] }"></div>
+      </div>
+    </div>
+  `
+
+  $(paletteDisplay).appendTo(`.${ projectID }`);
+}
+
 const showProject = ({ id, name }) => {
   $('.project-form-validation').empty();
   $('.project-display').append(
     `
-      <div id="${ id }">
+      <div class="${ id }">
         <h3>${ name }</h3>
       </div>
     `
   );
+  displayProjectOption(id, name);
 }
 
 const validation = (message) => {
   $('.project-form-validation').prepend(message)
+}
+
+const submitPalette = async(event) => {
+  event.preventDefault();
+
+  const options = event.target.elements[0].options;
+  const projectID = options[options.selectedIndex].id;
+  const name = event.target.elements[1].value || 'My Project';
+  const colors = palette.map(div => div.color);
+  const info = { name, colors, projectID };
+  const results = await createPalette(info);
+
+  showPalette(info, results.id);
+  event.target.reset();
 }
 
 const submitProject = async(event) => {
@@ -84,7 +165,7 @@ const submitProject = async(event) => {
   event.target.reset();
 }
 
-window.onload = displayColors;
+window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
 $('.save-palette').on('submit', submitPalette);
