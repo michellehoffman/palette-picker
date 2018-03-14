@@ -140,12 +140,18 @@ const validation = (message) => {
   $('.project-form-validation').prepend(message)
 }
 
-const submitPalette = async(event) => {
-  event.preventDefault();
-
+const getPaletteFormDetails = (elements) => {
   const options = event.target.elements[0].options;
   const projectID = options[options.selectedIndex].id;
   const name = event.target.elements[1].value || 'My Project';
+
+  return { projectID, name }
+}
+
+const submitPalette = async(event) => {
+  event.preventDefault();
+
+  const { projectID, name } = getPaletteFormDetails();
   const colors = palette.map(div => div.color);
   const info = { name, colors, projectID };
   const results = await createPalette(info);
