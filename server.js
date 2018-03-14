@@ -10,21 +10,15 @@ app.locals.title = 'Palette Picker';
 app.locals.projects = [
   { 
     id: 1,
-    name: 'Project 1',
-    palettes: [
-      {
-        id: 1,
-        name: 'Fire',
-        colors: ['#000000', '#FFFFFF', '#FCF015', '#EF4AB7', '#3AD784']
-      }
-    ]
+    name: 'Project 1'
   }
 ];
 app.locals.palettes = [
   {
     id: 1,
     name: 'Fire',
-    colors: ['#000000', '#FFFFFF', '#FCF015', '#EF4AB7', '#3AD784']
+    colors: ['#000000', '#FFFFFF', '#FCF015', '#EF4AB7', '#3AD784'],
+    projectID: 1
   }
 ]
 
@@ -48,6 +42,13 @@ app.get('/api/v1/palettes/:id', (request, response) => {
   response.status(200).json(palette);
 })
 
+app.get('/api/v1/projects/:id/palettes', (request, response) => {
+  const { id } = request.params;
+  const palettes = app.locals.palettes.filter(palette => palette.projectID === parseInt(id));
+
+  response.status(200).json(palette);
+})
+
 app.post('/api/v1/projects', (request, response) => {
   const id = Date.now();
   const { name } = request.body;
@@ -66,8 +67,7 @@ app.post('/api/v1/projects', (request, response) => {
 
   const newProject = { 
     id,
-    name,
-    palettes: []
+    name
   };
 
   app.locals.projects.push(newProject);
@@ -80,12 +80,12 @@ app.post('/api/v1/palettes', (request, response) => {
   const newPalette = {
     id,
     name,
-    colors
+    colors,
+    projectID
   }
   const project = app.locals.projects.find(project => project.id === parseInt(projectID));
 
   app.locals.palettes.push(newPalette);
-  project.palettes.push(newPalette);
   response.status(201).json(newPalette);
 })
 
@@ -93,11 +93,8 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
   const { id } = request.params;
   const { projectID } = request.body;
   const remainingPalettes = app.locals.palettes.filter(palette => palette.id !== parseInt(id));
-  const project = app.locals.projects.find(project => project.id === parseInt(projectID))
-  const remainingProjectPalettes = project.palettes.filter(palette => palette.id !== parseInt(id));
-  
+ 
   app.locals.palettes = remainingPalettes;
-  project.palettes = remainingProjectPalettes;
   response.json({ message: 'Palette sucessfully deleted' });
 })
 
