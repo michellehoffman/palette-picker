@@ -33,6 +33,31 @@ const displayColors = () => {
   })
 }
 
+const getProjects = async() => {
+  try {
+    const url = `${ root }/api/v1/projects`;
+    const response = await fetch(url);
+    const results = await response.json();
+    
+    return results;
+  } catch(error) {
+    return error;
+  }
+}
+
+const displayProjectOptions = async() => {
+  const projects = await getProjects();
+  
+  projects.map(project => {
+    return $(`<option value=${ project.name }>${ project.name }</option>`).appendTo('#select-project');
+  });
+}
+
+const setup = () => {
+  displayColors();
+  displayProjectOptions();
+}
+
 const lockColor = () => {
   const hexCode = $(this).next().text();
   const color = palette.find(section => section.color === hexCode);
@@ -73,6 +98,14 @@ const validation = (message) => {
   $('.project-form-validation').prepend(message)
 }
 
+// const submitPalette = async(event) => {
+//   event.preventDefault();
+
+//   console.log(event.target.elements);
+//   const projectName = event.target.elements[0].value;
+
+// }
+
 const submitProject = async(event) => {
   event.preventDefault();
 
@@ -84,7 +117,7 @@ const submitProject = async(event) => {
   event.target.reset();
 }
 
-window.onload = displayColors;
+window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
 $('.save-palette').on('submit', submitPalette);
