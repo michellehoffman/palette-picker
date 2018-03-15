@@ -135,7 +135,7 @@ const showPalette = ({ name, colors, project_id, id }) => {
       </div>
     </div>
   `
-  $(paletteDisplay).appendTo(`.${ project_id }`);
+  $(`.${ project_id }`).append(paletteDisplay);
 }
 
 const showProject = ({ id, name }) => {
@@ -168,8 +168,9 @@ const submitPalette = async (event) => {
   const { project_id, name } = getPaletteFormDetails();
   const colors = palette.map(div => div.color);
   const results = await createPalette({ name, colors, project_id });
-
-  showPalette(results);
+  // debugger;
+  const paletteInfo = { name, colors, project_id, id: results.id }
+  showPalette(paletteInfo);
   event.target.reset();
 }
 
