@@ -83,12 +83,13 @@ const setup = () => {
   displayProjects();
 }
 
-const lockColor = () => {
-  const hexCode = $(this).next().text();
-  const color = palette.find(section => section.color === hexCode);
+const lockColor = (event) => {
+  const div = event.target.parentNode;
+  const hexCode = $(div).find('.hexCode').text()
+  const color = palette.find(div => div.color === hexCode)
 
   color.locked = !color.locked;
-  $(this).attr('src', lockImage[color.locked]);
+  $(event.target).attr('src', lockImage[color.locked]);
 }
 
 // API CALL
