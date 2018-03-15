@@ -151,6 +151,7 @@ const showPalette = ({ name, colors, project_id, id }) => {
         <div class="color" style="background-color: ${ colors[3] }"></div>
         <div class="color" style="background-color: ${ colors[4] }"></div>
       </div>
+      <img src="./assets/001-garbage.svg" class="delete-button">
     </div>
   `
   $(`.${ project_id }`).append(paletteDisplay);
@@ -221,9 +222,32 @@ const displayPalette = async (event) => {
   changeColorDisplay(colors);
 }
 
+const removePaletteFromDb = async (id) => {
+  try {
+    const url = `${ root }/api/v1/palettes/${ id }`;
+    const response = await fetch(url, {
+      method: 'DELETE'
+    })
+    const results = await response.json();
+
+    return results;
+  } catch (error) {
+    return error;
+  }
+}
+
+const deletePalette = async (event) => {
+  const div = event.target.parentNode;
+  const id = div.className;
+  
+  $(div).remove();
+  await removePaletteFromDb(id);
+}
+
 window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
 $('.save-palette').on('submit', submitPalette);
 $('.save-project').on('submit', submitProject);
 $('.project-display').on('click', '.saved-palette', displayPalette);
+$('.project-display').on('click', '.delete-button', deletePalette);
