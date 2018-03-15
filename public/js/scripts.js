@@ -46,9 +46,23 @@ const getProjects = async () => {
   }
 }
 
+// API CALL
 const getPalettes = async (id) => {
   try {
     const url = `${ root }/api/v1/projects/${ id }/palettes`;
+    const response = await fetch(url);
+    const results = await response.json();
+
+    return results;
+  } catch(error) {
+    return error;
+  }
+}
+
+// API CALL
+const getSavedPalette = async (id) => {
+  try {
+    const url = `${ root }/api/v1/palettes/${ id }`;
     const response = await fetch(url);
     const results = await response.json();
 
@@ -189,8 +203,27 @@ const submitProject = async (event) => {
   event.target.reset();
 }
 
+const changeColorDisplay = (colors) => {
+  colors.forEach((color, index) => {
+    palette[index].color = color
+    const div = palette[index].div
+
+    $(div).css('background-color', color);
+    $(div).find('.hexCode').text(color);
+  });
+}
+
+const displayPalette = async (event) => {
+  const div = event.target.parentNode;
+  const id = div.className;
+  const { colors } = await getSavedPalette(id);
+  
+  changeColorDisplay(colors);
+}
+
 window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
 $('.save-palette').on('submit', submitPalette);
 $('.save-project').on('submit', submitProject);
+$('.project-display').on('click', '.saved-palette', displayPalette);
