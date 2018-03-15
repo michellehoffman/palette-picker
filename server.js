@@ -5,22 +5,11 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.json());
 app.use(express.static('public'));
-
 app.locals.title = 'Palette Picker';
-app.locals.projects = [
-  { 
-    id: 1,
-    name: 'Project 1'
-  }
-];
-app.locals.palettes = [
-  {
-    id: 1,
-    name: 'Fire',
-    colors: ['#000000', '#FFFFFF', '#FCF015', '#EF4AB7', '#3AD784'],
-    projectID: 1
-  }
-]
+
+const environment = process.env.NODE_ENV || 'development';
+const configuration = require('./knexfile')[environment];
+const database = require('knex')(configuration);
 
 app.get('/api/v1/projects', (request, response) => {
   const { projects } = app.locals;
@@ -101,3 +90,19 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
 app.listen(app.get('port'), () => {
   console.log(`${ app.locals.title } is listening on port ${ app.get('port') }`)
 })
+
+
+// app.locals.projects = [
+//   { 
+//     id: 1,
+//     name: 'Project 1'
+//   }
+// ];
+// app.locals.palettes = [
+//   {
+//     id: 1,
+//     name: 'Fire',
+//     colors: ['#000000', '#FFFFFF', '#FCF015', '#EF4AB7', '#3AD784'],
+//     projectID: 1
+//   }
+// ]
