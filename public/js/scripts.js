@@ -61,8 +61,9 @@ const getPalettes = async(id) => {
 const getProjectInfo = async(project) => {
   displayProjectOption(project.id, project.name);
   showProject(project);
+
   const palettes = await getPalettes(project.id);
-  palettes.map(palette => showPalette(palette))
+  palettes.map(palette => showPalette(palette));
 } 
 
 const displayProjects = async() => {
@@ -122,7 +123,7 @@ const createProject = async(name) => {
   }
 }
 
-const showPalette = ({ name, colors, projectID, id }) => {
+const showPalette = ({ name, colors, project_id, id }) => {
   const paletteDisplay = `
     <div class="${ id }">
       <h4>${ name }</h4>
@@ -135,7 +136,7 @@ const showPalette = ({ name, colors, projectID, id }) => {
       </div>
     </div>
   `
-  $(paletteDisplay).appendTo(`.${ projectID }`);
+  $(paletteDisplay).appendTo(`.${ project_id }`);
 }
 
 const showProject = ({ id, name }) => {
@@ -156,7 +157,7 @@ const validation = (message) => {
 
 const getPaletteFormDetails = (elements) => {
   const options = event.target.elements[0].options;
-  const projectID = options[options.selectedIndex].id;
+  const project_id = options[options.selectedIndex].id;
   const name = event.target.elements[1].value || 'My Project';
 
   return { projectID, name }
@@ -165,10 +166,10 @@ const getPaletteFormDetails = (elements) => {
 const submitPalette = async(event) => {
   event.preventDefault();
 
-  const { projectID, name } = getPaletteFormDetails();
+  const { project_id, name } = getPaletteFormDetails();
   const colors = palette.map(div => div.color);
-  const results = await createPalette({ name, colors, projectID });
-  
+  const results = await createPalette({ name, colors, project_id });
+
   showPalette(results);
   event.target.reset();
 }
