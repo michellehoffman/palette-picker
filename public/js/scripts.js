@@ -62,7 +62,10 @@ const getProjectInfo = async (project) => {
   showProject(project);
 
   const palettes = await getPalettes(project.id);
-  palettes.map(palette => showPalette(palette));
+
+  if (palettes.length) {
+    palettes.map(palette => showPalette(palette));
+  }
 } 
 
 const displayProjects = async () => {
@@ -168,8 +171,8 @@ const submitPalette = async (event) => {
   const { project_id, name } = getPaletteFormDetails();
   const colors = palette.map(div => div.color);
   const results = await createPalette({ name, colors, project_id });
-  // debugger;
-  const paletteInfo = { name, colors, project_id, id: results.id }
+  const paletteInfo = { name, colors, project_id, id: results.id };
+
   showPalette(paletteInfo);
   event.target.reset();
 }

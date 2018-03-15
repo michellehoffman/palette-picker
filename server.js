@@ -84,7 +84,6 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
 
   database('palettes').where('id', id).del()
     .then(() => console.log('Palette sucessfully deleted'))
-    .finally(() => knex.destroy())
 })
 
 app.listen(app.get('port'), () => {
