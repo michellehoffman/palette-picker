@@ -34,7 +34,7 @@ const displayColors = () => {
 }
 
 // API CALL
-const getProjects = async() => {
+const getProjects = async () => {
   try {
     const url = `${ root }/api/v1/projects`;
     const response = await fetch(url);
@@ -46,14 +46,32 @@ const getProjects = async() => {
   }
 }
 
-const displayProjects = async() => {
+const getPalettes = async (id) => {
+  try {
+    const url = `${ root }/api/v1/projects/${ id }/palettes`;
+    const response = await fetch(url);
+    const results = await response.json();
+
+    return results;
+  } catch(error) {
+    return error;
+  }
+}
+
+const getProjectInfo = async (project) => {
+  showProject(project);
+
+  const palettes = await getPalettes(project.id);
+
+  if (palettes.length) {
+    palettes.map(palette => showPalette(palette));
+  }
+} 
+
+const displayProjects = async () => {
   const projects = await getProjects();
   
-  projects.forEach(project => {
-    showProject(project);
-    showPalette()
-    displayProjectOption(project.id, project.name);
-  })
+  projects.forEach(project => getProjectInfo(project));
 }
 
 const displayProjectOption = (id, name) => {
@@ -74,7 +92,7 @@ const lockColor = () => {
 }
 
 // API CALL
-const createPalette = async(info) => {
+const createPalette = async (info) => {
   try {
     const url = `${ root }/api/v1/palettes`;
     const response = await fetch(url, {
@@ -91,7 +109,7 @@ const createPalette = async(info) => {
 }
 
 // API CALL
-const createProject = async(name) => {
+const createProject = async (name) => {
   try {
     const url = `${ root }/api/v1/projects`;
     const response = await fetch(url, {
@@ -107,7 +125,7 @@ const createProject = async(name) => {
   }
 }
 
-const showPalette = ({ name, colors, projectID }, id) => {
+const showPalette = ({ name, colors, project_id, id }) => {
   const paletteDisplay = `
     <div class="${ id }">
       <h4>${ name }</h4>
@@ -120,8 +138,7 @@ const showPalette = ({ name, colors, projectID }, id) => {
       </div>
     </div>
   `
-
-  $(paletteDisplay).appendTo(`.${ projectID }`);
+  $(`.${ project_id }`).append(paletteDisplay);
 }
 
 const showProject = ({ id, name }) => {
@@ -137,37 +154,37 @@ const showProject = ({ id, name }) => {
 }
 
 const validation = (message) => {
-  $('.project-form-validation').prepend(message)
+  $('.project-form-validation').prepend(message);
 }
 
 const getPaletteFormDetails = (elements) => {
   const options = event.target.elements[0].options;
-  const projectID = options[options.selectedIndex].id;
+  const project_id = options[options.selectedIndex].id;
   const name = event.target.elements[1].value || 'My Project';
 
-  return { projectID, name }
+  return { project_id, name }
 }
 
-const submitPalette = async(event) => {
+const submitPalette = async (event) => {
   event.preventDefault();
 
-  const { projectID, name } = getPaletteFormDetails();
+  const { project_id, name } = getPaletteFormDetails();
   const colors = palette.map(div => div.color);
-  const info = { name, colors, projectID };
-  const results = await createPalette(info);
+  const results = await createPalette({ name, colors, project_id });
+  const paletteInfo = { name, colors, project_id, id: results.id };
 
-  showPalette(info, results.id);
+  showPalette(paletteInfo);
   event.target.reset();
 }
 
-const submitProject = async(event) => {
+const submitProject = async (event) => {
   event.preventDefault();
 
   const name = event.target.elements[0].value;
   const results = await createProject(name);
-  const { message } = results;
+  const { error } = results;
 
-  message ? validation(message) : showProject(results)
+  error ? validation(error) : showProject({ id: results.id, name })
   event.target.reset();
 }
 
