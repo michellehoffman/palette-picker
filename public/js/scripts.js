@@ -34,7 +34,7 @@ const displayColors = () => {
 }
 
 // API CALL
-const getProjects = async() => {
+const getProjects = async () => {
   try {
     const url = `${ root }/api/v1/projects`;
     const response = await fetch(url);
@@ -46,7 +46,7 @@ const getProjects = async() => {
   }
 }
 
-const getPalettes = async(id) => {
+const getPalettes = async (id) => {
   try {
     const url = `${ root }/api/v1/projects/${ id }/palettes`;
     const response = await fetch(url);
@@ -58,15 +58,14 @@ const getPalettes = async(id) => {
   }
 }
 
-const getProjectInfo = async(project) => {
-  displayProjectOption(project.id, project.name);
+const getProjectInfo = async (project) => {
   showProject(project);
 
   const palettes = await getPalettes(project.id);
   palettes.map(palette => showPalette(palette));
 } 
 
-const displayProjects = async() => {
+const displayProjects = async () => {
   const projects = await getProjects();
   
   projects.forEach(project => getProjectInfo(project));
@@ -90,7 +89,7 @@ const lockColor = () => {
 }
 
 // API CALL
-const createPalette = async(info) => {
+const createPalette = async (info) => {
   try {
     const url = `${ root }/api/v1/palettes`;
     const response = await fetch(url, {
@@ -107,7 +106,7 @@ const createPalette = async(info) => {
 }
 
 // API CALL
-const createProject = async(name) => {
+const createProject = async (name) => {
   try {
     const url = `${ root }/api/v1/projects`;
     const response = await fetch(url, {
@@ -160,10 +159,10 @@ const getPaletteFormDetails = (elements) => {
   const project_id = options[options.selectedIndex].id;
   const name = event.target.elements[1].value || 'My Project';
 
-  return { projectID, name }
+  return { project_id, name }
 }
 
-const submitPalette = async(event) => {
+const submitPalette = async (event) => {
   event.preventDefault();
 
   const { project_id, name } = getPaletteFormDetails();
@@ -174,14 +173,14 @@ const submitPalette = async(event) => {
   event.target.reset();
 }
 
-const submitProject = async(event) => {
+const submitProject = async (event) => {
   event.preventDefault();
 
   const name = event.target.elements[0].value;
   const results = await createProject(name);
-  const { message } = results;
+  const { error } = results;
 
-  message ? validation(message) : showProject(results)
+  error ? validation(error) : showProject({ id: results.id, name })
   event.target.reset();
 }
 
