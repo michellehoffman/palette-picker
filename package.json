@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "eslint": "^4.18.2",
     "express": "^4.16.3",
     "knex": "^0.14.4",
     "nodemon": "^1.17.1",
@@ -17,6 +18,7 @@
   },
   "scripts": {
     "test": "NODE_ENV=test mocha --exit",
+    "lint": "./node_modules/eslint/bin/eslint.js ./src/*/*/*.js",
     "start": "node server.js"
   },
   "repository": {

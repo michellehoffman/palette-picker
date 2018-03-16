@@ -42,11 +42,11 @@ describe('API Routes', () => {
       .then(() => {
         return database.seed.run()
         .then(() => {
-          done()
+          done();
         })
       })
     })
-  })
+  });
 
   describe('GET /api/v1/projects', () => {
     it('should return all of the projects', () => {

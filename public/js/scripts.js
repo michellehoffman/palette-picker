@@ -5,11 +5,11 @@ const palette = [
   { div: '.color-3', color: null, locked: false },
   { div: '.color-4', color: null, locked: false },
   { div: '.color-5', color: null, locked: false }
-]
+];
 const lockImage = {
   true: './assets/002-lock-1.svg',
   false: './assets/003-lock.svg'
-}
+};
 
 const generateColor = () => {
   const letters = '0123456789ABCDEF';
@@ -17,10 +17,10 @@ const generateColor = () => {
 
   for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)]
-  }
+  };
 
   return color;
-}
+};
 
 const displayColors = () => {
   palette.forEach( section => {
@@ -30,8 +30,8 @@ const displayColors = () => {
       $(section.div).css('background-color', section.color)
     }
     $(section.div).find('.hexCode').text(section.color);
-  })
-}
+  });
+};
 
 // API CALL
 const getProjects = async () => {
@@ -44,7 +44,7 @@ const getProjects = async () => {
   } catch(error) {
     return error;
   }
-}
+};
 
 // API CALL
 const getPalettes = async (id) => {
@@ -57,7 +57,7 @@ const getPalettes = async (id) => {
   } catch(error) {
     return error;
   }
-}
+};
 
 // API CALL
 const getSavedPalette = async (id) => {
@@ -70,7 +70,7 @@ const getSavedPalette = async (id) => {
   } catch(error) {
     return error;
   }
-}
+};
 
 const getProjectInfo = async (project) => {
   showProject(project);
@@ -80,31 +80,31 @@ const getProjectInfo = async (project) => {
   if (palettes.length) {
     palettes.map(palette => showPalette(palette));
   }
-} 
+};
 
 const displayProjects = async () => {
   const projects = await getProjects();
   
   projects.forEach(project => getProjectInfo(project));
-}
+};
 
 const displayProjectOption = (id, name) => {
   $(`<option id=${ id } value=${ name }>${ name }</option>`).appendTo('#select-project');
-}
+};
 
 const setup = () => {
   displayColors();
   displayProjects();
-}
+};
 
 const lockColor = (event) => {
   const div = event.target.parentNode;
-  const hexCode = $(div).find('.hexCode').text()
-  const color = palette.find(div => div.color === hexCode)
+  const hexCode = $(div).find('.hexCode').text();
+  const color = palette.find(div => div.color === hexCode);
 
   color.locked = !color.locked;
   $(event.target).attr('src', lockImage[color.locked]);
-}
+};
 
 // API CALL
 const createPalette = async (info) => {
@@ -114,14 +114,14 @@ const createPalette = async (info) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(info)
-    })
+    });
     const results = await response.json();
 
     return results;
   } catch (error) {
     return error;
   }
-}
+};
 
 // API CALL
 const createProject = async (name) => {
@@ -138,7 +138,7 @@ const createProject = async (name) => {
   } catch(error) {
     return error;
   }
-}
+};
 
 const showPalette = ({ name, colors, project_id, id }) => {
   const paletteDisplay = `
@@ -153,9 +153,9 @@ const showPalette = ({ name, colors, project_id, id }) => {
       </div>
       <img src="./assets/001-garbage.svg" class="delete-button">
     </div>
-  `
+  `;
   $(`.${ project_id }`).append(paletteDisplay);
-}
+};
 
 const showProject = ({ id, name }) => {
   $('.project-form-validation').empty();
@@ -167,19 +167,19 @@ const showProject = ({ id, name }) => {
     `
   );
   displayProjectOption(id, name);
-}
+};
 
 const validation = (message) => {
   $('.project-form-validation').prepend(message);
-}
+};
 
 const getPaletteFormDetails = (elements) => {
   const options = event.target.elements[0].options;
   const project_id = options[options.selectedIndex].id;
   const name = event.target.elements[1].value || 'My Project';
 
-  return { project_id, name }
-}
+  return { project_id, name };
+};
 
 const submitPalette = async (event) => {
   event.preventDefault();
@@ -191,7 +191,7 @@ const submitPalette = async (event) => {
 
   showPalette(paletteInfo);
   event.target.reset();
-}
+};
 
 const submitProject = async (event) => {
   event.preventDefault();
@@ -200,19 +200,19 @@ const submitProject = async (event) => {
   const results = await createProject(name);
   const { error } = results;
 
-  error ? validation(error) : showProject({ id: results.id, name })
+  error ? validation(error) : showProject({ id: results.id, name });
   event.target.reset();
-}
+};
 
 const changeColorDisplay = (colors) => {
   colors.forEach((color, index) => {
-    palette[index].color = color
-    const div = palette[index].div
+    palette[index].color = color;
+    const div = palette[index].div;
 
     $(div).css('background-color', color);
     $(div).find('.hexCode').text(color);
   });
-}
+};
 
 const displayPalette = async (event) => {
   const div = event.target.parentNode;
@@ -220,21 +220,21 @@ const displayPalette = async (event) => {
   const { colors } = await getSavedPalette(id);
   
   changeColorDisplay(colors);
-}
+};
 
 const removePaletteFromDb = async (id) => {
   try {
     const url = `${ root }/api/v1/palettes/${ id }`;
     const response = await fetch(url, {
       method: 'DELETE'
-    })
+    });
     const results = await response.json();
 
     return results;
   } catch (error) {
     return error;
   }
-}
+};
 
 const deletePalette = async (event) => {
   const div = event.target.parentNode;
