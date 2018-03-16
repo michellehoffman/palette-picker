@@ -32,111 +32,31 @@ const displayColors = () => {
   });
 };
 
-// API CALL
-const getProjects = async () => {
+const apiCall = async (url, init = { method: 'GET' }) => {
   try {
-    const url = `/api/v1/projects`;
-    const response = await fetch(url);
-    const results = await response.json();
-    
-    return results;
-  } catch(error) {
-    return error;
-  }
-};
-
-// API CALL
-const getPalettes = async (id) => {
-  try {
-    const url = `/api/v1/projects/${ id }/palettes`;
-    const response = await fetch(url);
+    const response = await fetch(url, init);
     const results = await response.json();
 
     return results;
   } catch(error) {
     return error;
   }
-};
-
-// API CALL
-const getSavedPalette = async (id) => {
-  try {
-    const url = `/api/v1/palettes/${ id }`;
-    const response = await fetch(url);
-    const results = await response.json();
-
-    return results;
-  } catch(error) {
-    return error;
-  }
-};
-
-const getProjectInfo = async (project) => {
-  showProject(project);
-
-  const palettes = await getPalettes(project.id);
-
-  if (palettes.length) {
-    palettes.map(palette => showPalette(palette));
-  }
-};
-
-const displayProjects = async () => {
-  const projects = await getProjects();
-  
-  projects.forEach(project => getProjectInfo(project));
 };
 
 const displayProjectOption = (id, name) => {
   $(`<option id=${ id } value=${ name }>${ name }</option>`).appendTo('#select-project');
 };
 
-const setup = () => {
-  displayColors();
-  displayProjects();
-};
-
-const lockColor = (event) => {
-  const div = event.target.parentNode;
-  const hexCode = $(div).find('.hexCode').text();
-  const color = palette.find(div => div.color === hexCode);
-
-  color.locked = !color.locked;
-  $(event.target).attr('src', lockImage[color.locked]);
-};
-
-// API CALL
-const createPalette = async (info) => {
-  try {
-    const url = `/api/v1/palettes`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(info)
-    });
-    const results = await response.json();
-
-    return results;
-  } catch (error) {
-    return error;
-  }
-};
-
-// API CALL
-const createProject = async (name) => {
-  try {
-    const url = `/api/v1/projects`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
-    });
-    const results = await response.json();
-    
-    return results;
-  } catch(error) {
-    return error;
-  }
+const showProject = ({ id, name }) => {
+  $('.project-form-validation').empty();
+  $('.project-display').append(
+    `
+      <div class="${ id }">
+        <h3>${ name }</h3>
+      </div>
+    `
+  );
+  displayProjectOption(id, name);
 };
 
 const showPalette = ({ name, colors, project_id, id }) => {
@@ -156,20 +76,37 @@ const showPalette = ({ name, colors, project_id, id }) => {
   $(`.${ project_id }`).append(paletteDisplay);
 };
 
-const showProject = ({ id, name }) => {
-  $('.project-form-validation').empty();
-  $('.project-display').append(
-    `
-      <div class="${ id }">
-        <h3>${ name }</h3>
-      </div>
-    `
-  );
-  displayProjectOption(id, name);
+const getProjectInfo = async (project) => {
+  showProject(project);
+
+  const id = project.id;
+  const url = `/api/v1/projects/${ id }/palettes`;
+  const palettes = await apiCall(url);
+
+  if (palettes.length) {
+    palettes.map(palette => showPalette(palette));
+  }
 };
 
-const validation = (message) => {
-  $('.project-form-validation').prepend(message);
+const displayProjects = async () => {
+  const url = `/api/v1/projects`;
+  const projects = await apiCall(url);
+  
+  projects.forEach(project => getProjectInfo(project));
+};
+
+const setup = () => {
+  displayColors();
+  displayProjects();
+};
+
+const lockColor = (event) => {
+  const div = event.target.parentNode;
+  const hexCode = $(div).find('.hexCode').text();
+  const color = palette.find(div => div.color === hexCode);
+
+  color.locked = !color.locked;
+  $(event.target).attr('src', lockImage[color.locked]);
 };
 
 const getPaletteFormDetails = (elements) => {
@@ -180,26 +117,42 @@ const getPaletteFormDetails = (elements) => {
   return { project_id, name };
 };
 
-const submitPalette = async (event) => {
-  event.preventDefault();
-
-  const { project_id, name } = getPaletteFormDetails();
-  const colors = palette.map(div => div.color);
-  const results = await createPalette({ name, colors, project_id });
-  const paletteInfo = { name, colors, project_id, id: results.id };
-
-  showPalette(paletteInfo);
-  event.target.reset();
+const validation = (message) => {
+  $('.project-form-validation').prepend(message);
 };
 
 const submitProject = async (event) => {
   event.preventDefault();
 
   const name = event.target.elements[0].value;
-  const results = await createProject(name);
+  const url = `/api/v1/projects`;
+  const init = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name })
+  };
+  const results = await apiCall(url, init);
   const { error } = results;
 
   error ? validation(error) : showProject({ id: results.id, name });
+  event.target.reset();
+};
+
+const submitPalette = async (event) => {
+  event.preventDefault();
+
+  const { project_id, name } = getPaletteFormDetails();
+  const colors = palette.map(div => div.color);
+  const url = `/api/v1/palettes`;
+  const init = { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, colors, project_id }) 
+  }
+  const results = await apiCall(url, init);
+  const paletteInfo = { name, colors, project_id, id: results.id };
+
+  showPalette(paletteInfo);
   event.target.reset();
 };
 
@@ -214,54 +167,43 @@ const changeColorDisplay = (colors) => {
 };
 
 const displayPalette = async (event) => {
-  const div = event.target.parentNode;
-  const id = div.className;
-  const { colors } = await getSavedPalette(id);
+  const div = event.target.parentNode.parentNode;
+  const id = div.className.slice(0,2);
+  const url = `/api/v1/palettes/${ id }`;
+  const { colors } = await apiCall(url);
   
   changeColorDisplay(colors);
-};
-
-const removePaletteFromDb = async (id) => {
-  try {
-    const url = `/api/v1/palettes/${ id }`;
-    const response = await fetch(url, {
-      method: 'DELETE'
-    });
-    const results = await response.json();
-
-    return results;
-  } catch (error) {
-    return error;
-  }
 };
 
 const deletePalette = async (event) => {
   const div = event.target.parentNode;
   const id = div.className.slice(0, 2);
+  const url = `/api/v1/palettes/${ id }`;
+  const init = { method: 'DELETE' };
   
   $(div).remove();
-  await removePaletteFromDb(id);
-}
+  await apiCall(url, init);
+};
 
 const toggleClassActive = (event) => {
   const input = event.target;
-  const label = $(input).next()
+  const label = $(input).next();
   
   $(label).attr('class', 'active');
-}
+};
 
 const toggleClassInactive = (event) => {
   const input = event.target;
-  const label = $(input).next()
+  const label = $(input).next();
   
   $(label).attr('class', 'inactive');
-}
+};
 
 window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
-$('.save-palette').on('submit', submitPalette);
 $('.save-project').on('submit', submitProject);
+$('.save-palette').on('submit', submitPalette);
 $('.project-display').on('click', '.saved-palette', displayPalette);
 $('.project-display').on('click', '.delete-button', deletePalette);
 $('#palette-name').on('click', toggleClassActive);
