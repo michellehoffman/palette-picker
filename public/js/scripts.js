@@ -142,7 +142,7 @@ const createProject = async (name) => {
 
 const showPalette = ({ name, colors, project_id, id }) => {
   const paletteDisplay = `
-    <div class="${ id }">
+    <div class="${ id } palette-single">
       <h4>${ name }</h4>
       <div class="saved-palette">
         <div class="color" style="background-color: ${ colors[0] }"></div>
@@ -244,6 +244,20 @@ const deletePalette = async (event) => {
   await removePaletteFromDb(id);
 }
 
+const toggleClassActive = (event) => {
+  const input = event.target;
+  const label = $(input).next()
+  
+  $(label).attr('class', 'active');
+}
+
+const toggleClassInactive = (event) => {
+  const input = event.target;
+  const label = $(input).next()
+  
+  $(label).attr('class', 'inactive');
+}
+
 window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
@@ -251,3 +265,7 @@ $('.save-palette').on('submit', submitPalette);
 $('.save-project').on('submit', submitProject);
 $('.project-display').on('click', '.saved-palette', displayPalette);
 $('.project-display').on('click', '.delete-button', deletePalette);
+$('#palette-name').on('click', toggleClassActive);
+$('#palette-name').on('blur', toggleClassInactive);
+$('#project-name').on('click', toggleClassActive);
+$('#project-name').on('blur', toggleClassInactive);
