@@ -83,9 +83,12 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
   const { id } = request.params;
 
   database('palettes').where('id', id).del()
-    .then(() => console.log('Palette sucessfully deleted'))
+    .then(palettes => response.status(204))
+    .catch(error => response.status(500).json({ error }))
 })
 
 app.listen(app.get('port'), () => {
   console.log(`${ app.locals.title } is listening on port ${ app.get('port') }`)
 })
+
+module.exports = app;
