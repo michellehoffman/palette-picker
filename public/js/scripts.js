@@ -1,4 +1,3 @@
-const root = 'http://localhost:3000';
 const palette = [
   { div: '.color-1', color: null, locked: false },
   { div: '.color-2', color: null, locked: false },
@@ -36,7 +35,7 @@ const displayColors = () => {
 // API CALL
 const getProjects = async () => {
   try {
-    const url = `${ root }/api/v1/projects`;
+    const url = `/api/v1/projects`;
     const response = await fetch(url);
     const results = await response.json();
     
@@ -49,7 +48,7 @@ const getProjects = async () => {
 // API CALL
 const getPalettes = async (id) => {
   try {
-    const url = `${ root }/api/v1/projects/${ id }/palettes`;
+    const url = `/api/v1/projects/${ id }/palettes`;
     const response = await fetch(url);
     const results = await response.json();
 
@@ -62,7 +61,7 @@ const getPalettes = async (id) => {
 // API CALL
 const getSavedPalette = async (id) => {
   try {
-    const url = `${ root }/api/v1/palettes/${ id }`;
+    const url = `/api/v1/palettes/${ id }`;
     const response = await fetch(url);
     const results = await response.json();
 
@@ -109,7 +108,7 @@ const lockColor = (event) => {
 // API CALL
 const createPalette = async (info) => {
   try {
-    const url = `${ root }/api/v1/palettes`;
+    const url = `/api/v1/palettes`;
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -126,7 +125,7 @@ const createPalette = async (info) => {
 // API CALL
 const createProject = async (name) => {
   try {
-    const url = `${ root }/api/v1/projects`;
+    const url = `/api/v1/projects`;
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -224,7 +223,7 @@ const displayPalette = async (event) => {
 
 const removePaletteFromDb = async (id) => {
   try {
-    const url = `${ root }/api/v1/palettes/${ id }`;
+    const url = `/api/v1/palettes/${ id }`;
     const response = await fetch(url, {
       method: 'DELETE'
     });
@@ -238,7 +237,7 @@ const removePaletteFromDb = async (id) => {
 
 const deletePalette = async (event) => {
   const div = event.target.parentNode;
-  const id = div.className;
+  const id = div.className.slice(0, 2);
   
   $(div).remove();
   await removePaletteFromDb(id);
