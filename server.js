@@ -9,6 +9,15 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 // tell app to utilize body-parser
 app.use(bodyParser.json());
+
+app.use(function redirect(request, response, next) {
+  if(request.secure) {
+    next();
+  } else {
+    response.redirect('https://' + request.headers.host + request.url)
+  }
+})
+
 // tell app to serve static files from public directory
 app.use(express.static('public'));
 // give app a title in the express local variables
@@ -21,9 +30,9 @@ const configuration = require('./knexfile')[environment];
 // configure database
 const database = require('knex')(configuration);
 
-app.get('*', (request, response) => {
-  response.redirect('https://' + request.headers.host + request.url)
-});
+// app.get(*, (request, response) => {
+//   response.redirect('https://' + request.headers.host + request.url)
+// });
 
 // create api endpoint for /projects with GET method
 app.get('/api/v1/projects', (request, response) => {
