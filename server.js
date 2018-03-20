@@ -11,7 +11,7 @@ app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.json());
 
 app.use(function redirect(request, response, next) {
-  if(request.secure) {
+  if(request.protocol === 'https') {
     next();
   } else {
     response.redirect('https://' + request.headers.host + request.url)
@@ -29,10 +29,6 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 // configure database
 const database = require('knex')(configuration);
-
-// app.get(*, (request, response) => {
-//   response.redirect('https://' + request.headers.host + request.url)
-// });
 
 // create api endpoint for /projects with GET method
 app.get('/api/v1/projects', (request, response) => {
