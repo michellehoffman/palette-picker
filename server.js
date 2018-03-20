@@ -4,14 +4,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 // instantiate express
 const app = express();
-
 const requireHTTPS = (req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
+  if (req.headers['X-Forwarded-Proto'] !== 'https') {
     return res.redirect('https://' + req.get('host') + req.url);
   }
-    next();
+  next();
 };
-
 
 // set the port of for the app to run on upon start
 app.set('port', process.env.PORT || 3000);
@@ -20,9 +18,7 @@ app.use(bodyParser.json());
 // tell app to serve static files from public directory
 app.use(express.static('public'));
 // give app a title in the express local variables
-
 if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
-
 
 app.locals.title = 'Palette Picker';
 
