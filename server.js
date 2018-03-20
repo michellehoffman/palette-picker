@@ -21,8 +21,8 @@ const configuration = require('./knexfile')[environment];
 // configure database
 const database = require('knex')(configuration);
 
-app.get('/', (request, response) => {
-  res.redirect('https://' + request.headers.host + request.url)
+app.get('*', (request, response) => {
+  response.redirect('https://' + request.headers.host + request.url)
 });
 
 // create api endpoint for /projects with GET method
