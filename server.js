@@ -11,12 +11,11 @@ app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.json());
 
 app.use(function redirect(request, response, next) {
-  if(request.protocol === 'https') {
-    return
-    // next();
-  } else {
-    response.redirect('https://' + request.headers.host + request.url)
+  if (request.protocol !== 'https://' && environment === 'production') {
+    response.redirect('https://' + request.headers.host + request.path)
   }
+
+  next();
 })
 
 // tell app to serve static files from public directory
