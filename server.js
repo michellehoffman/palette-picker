@@ -12,7 +12,8 @@ app.use(bodyParser.json());
 
 app.use(function redirect(request, response, next) {
   if(request.protocol === 'https') {
-    next();
+    return
+    // next();
   } else {
     response.redirect('https://' + request.headers.host + request.url)
   }
