@@ -5,14 +5,13 @@ const bodyParser = require('body-parser');
 // instantiate express
 const app = express();
 
-
-function redirect(request, response, next) {
-  if (request.headers['x-forwarded-proto'] !== 'https://') {
-    response.redirect('https://' + request.get('host') + request.url)
+const requireHTTPS = (req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect('https://' + req.get('host') + req.url);
   }
+    next();
+};
 
-  next();
-}
 
 // set the port of for the app to run on upon start
 app.set('port', process.env.PORT || 3000);
@@ -22,7 +21,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 // give app a title in the express local variables
 
-if(process.env.NODE_ENV === 'production') { app.use(redirect) }
+if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
 
 
 app.locals.title = 'Palette Picker';
