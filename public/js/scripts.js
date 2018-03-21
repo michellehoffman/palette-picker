@@ -199,7 +199,7 @@ const toggleClassInactive = (event) => {
   $(label).attr('class', 'inactive');
 };
 
-window.onload = setup;
+// window.onload = setup;
 $('.generate-button').on('click', displayColors);
 $('.lock-button').on('click', lockColor);
 $('.save-project').on('submit', submitProject);
