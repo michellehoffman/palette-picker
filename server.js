@@ -4,9 +4,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 // instantiate express
 const app = express();
+
 const requireHTTPS = (req, res, next) => {
   if (req.headers['X-Forwarded-Proto'] !== 'https') {
-    return res.redirect('https://' + req.get('host') + req.url);
+    console.log('not https')
+    // return res.redirect('https://' + req.get('host') + req.url);
   }
   next();
 };
