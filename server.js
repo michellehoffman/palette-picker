@@ -7,7 +7,7 @@ const app = express();
 
 const requireHTTPS = (req, res, next) => {
   console.log(req.headers)
-  if (req.headers['X-Forwarded-Proto'] != 'https') {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
     console.log('not https')
     // return res.redirect('https://' + req.get('host') + req.url);
   }
