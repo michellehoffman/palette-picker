@@ -16,12 +16,11 @@ app.set('port', process.env.PORT || 3000);
 // tell app to utilize body-parser
 app.use(bodyParser.json());
 app.enable('trust proxy');
-app.use(express.static('public'));
 if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
 
 // tell app to serve static files from public directory
+app.use(express.static('public'));
 // give app a title in the express local variables
-
 app.locals.title = 'Palette Picker';
 
 // determine the environment of app
