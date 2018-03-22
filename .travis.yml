@@ -1,7 +1,5 @@
 language: node_js
 node_js:
   - node
-# script:
-#   test: NODE_ENV=test mocha --exit
-env:
-  - NODE_ENV=test
+script:
+  test: NODE_ENV=test mocha --exit
