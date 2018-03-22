@@ -1,5 +1,7 @@
 language: node_js
 node_js:
   - node
-script:
-  test: NODE_ENV=test mocha --exit
+services:
+  - postgresql
+before_script:
+  - psql -c 'CREATE DATABASE test_palette_picker;' -U postgres
